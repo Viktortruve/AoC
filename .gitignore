@@ -1,0 +1,9 @@
+*.sc
+*.tasty
+.DS_Store
+.DS_STORE
+*.pyc
+*.txt
+*.class
+*.png
+
