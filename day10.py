@@ -4,18 +4,14 @@ import numpy as np
 
 def matrix_to_graph(matrix, neighbor_func):
 	G = nx.DiGraph()
-	node_count = 0
 	for i in range(len(matrix)):
 		 for j in range(len(matrix[0])):
-				G.add_node(node_count, pos=(i,j))
-				node_count += 1
-	pos=nx.get_node_attributes(G,'pos')
-	rev_pos = {v:k for k,v in pos.items()}
+				G.add_node((i,j))
 	for node in G.nodes:
-		row,col = pos[node]
+		row,col = node
 		neighs = neighbor_func(matrix,row,col)
 		for neigh in neighs:
-				G.add_edge(node,rev_pos[neigh])	
+				G.add_edge(node,neigh)	
 	return G
 
 def neighbors(matrix, row,col):
@@ -49,15 +45,13 @@ goals = np.argwhere(m==9)
 starts = [tuple(item) for item in starts]
 goals = [tuple(item) for item in goals]
 G = matrix_to_graph(m, neighbors)
-pos=nx.get_node_attributes(G,'pos')
-rev_pos = {v:k for k,v in pos.items()}
 paths = []
 path_count = 0
 for start in starts:
 		for goal in goals:
 			try:
-				paths.append(nx.astar.astar_path(G, rev_pos[start], rev_pos[goal]))
-				path_count += len(list(nx.all_simple_paths(G, rev_pos[start], rev_pos[goal])))		
+				paths.append(nx.astar.astar_path(G, start, goal))
+				path_count += len(list(nx.all_simple_paths(G, start, goal)))
 			except:
 				pass
 print(len(paths))
