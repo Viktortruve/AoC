@@ -2,7 +2,7 @@ import numpy as np
 import itertools
 l = []
 instructions = []
-with open("input.txt") as file:
+with open("day15.txt") as file:
     for line in file:
         if not line:
             continue
@@ -64,8 +64,8 @@ def aligned_boxes(pos, instr, m, b):
         b.append(new_pos)
         result.extend(aligned_boxes(new_pos, instr, m, b))
         b.pop()
-    
     return result
+
 robot = np.argwhere(m=="@")[0]
 for instr in instructions:
     next_c = [robot[0] + direction_map[instr][0], robot[1] + direction_map[instr][1]]
@@ -82,12 +82,10 @@ for instr in instructions:
         boxes += aligned_boxes(neighbor_box, instr, m, [this_box, neighbor_box])
         boxes = [list(x) for x in set(tuple(x) for x in boxes)]
         boxes = sorted(boxes, key = lambda p: (p[0][1] - robot[1])**2 + (p[0][0] - robot[0])**2)
-        print(robot, instr, boxes)
-        if boxes:
-            last_box_1 = m[boxes[-1][0][0]+direction_map[instr][0]][boxes[-1][0][1]+direction_map[instr][1]]
-            last_box_2 = m[boxes[-2][0][0]+direction_map[instr][0]][boxes[-2][0][1]+direction_map[instr][1]]
-            if last_box_1 != "#" and last_box_2 != "#":
-                for box in boxes[::-1]:
+        boxes = boxes[::-1]
+        if boxes:          
+            if not any([m[item[0][0]+direction_map[instr][0]][item[0][1]+direction_map[instr][1]] == "#" for item in boxes]):
+                for box in boxes:
                     m[box[0][0]+direction_map[instr][0]][box[0][1]+direction_map[instr][1]] = box[1]
                     m[box[0][0]][box[0][1]] = "."
                 m[robot[0]][robot[1]] = "."
